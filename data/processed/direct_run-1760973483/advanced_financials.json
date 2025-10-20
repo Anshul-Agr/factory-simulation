@@ -2,22 +2,29 @@
   "tier1": {
     "manufacturing_cost_per_unit": {
       "label": "Manufacturing Cost per Unit",
-      "value": 0.0,
+      "value": 1085.02618629791,
       "unit": "$/unit"
     },
     "cost_of_quality": {
       "label": "Cost of Quality (CoQ)",
-      "value": 125,
-      "unit": "$"
+      "value": 0,
+      "unit": "$",
+      "breakdown": {
+        "total_coq": 0,
+        "appraisal_costs": 0,
+        "internal_failure_costs": 0,
+        "external_failure_costs": 0,
+        "prevention_costs": 0
+      }
     },
     "unit_contribution_margin": {
       "label": "Avg. Unit Contribution Margin",
-      "value": 0.0,
+      "value": 333.99967577105565,
       "unit": "$/unit"
     },
     "maintenance_cost_per_unit": {
       "label": "Maintenance Cost per Unit",
-      "value": 0.0,
+      "value": 5.862068965517241,
       "unit": "$/unit"
     },
     "overtime_rate": {
@@ -34,22 +41,22 @@
   "tier2": {
     "inventory_turnover_rate": {
       "label": "Inventory Turnover Rate",
-      "value": 0.0,
+      "value": 59.49708865033976,
       "unit": ""
     },
     "return_on_assets": {
       "label": "Return on Assets (ROA)",
-      "value": 0,
+      "value": -14.489597922223973,
       "unit": "%"
     },
     "total_cost_of_ownership": {
       "label": "Total Cost of Ownership (TCO)",
-      "value": 747.880968013784,
+      "value": 253198.28772504878,
       "unit": "$"
     },
     "unused_capacity_cost": {
       "label": "Unused Capacity Cost",
-      "value": 32670.282084034276,
+      "value": 87187.35016397762,
       "unit": "$"
     }
   }

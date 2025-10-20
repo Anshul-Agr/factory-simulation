@@ -9,6 +9,7 @@ import time
 from typing import Dict, List
 from pathlib import Path
 
+
 # 3rd PARTY IMPORTS
 
 import matplotlib.pyplot as plt
@@ -442,6 +443,7 @@ class FinancialTracker:
         self.total_procurement_cost = 0.0
         self.stockout_costs = []
         self.total_stockout_cost = 0.0
+        self.total_machine_operating_cost = 0.0
         self.stockout_cost_per_unit = self.config.get('stockout_cost_per_unit', 15.0)
     def get_machine_config(self, machine_name):
         for stage, machines in self.machine_definitions.items():
@@ -482,6 +484,8 @@ class FinancialTracker:
         for machine_name in machines_used:
             config = self.get_machine_config(machine_name)
             total_machine_cost += cycle_time * config.get('operating_cost_per_hour', 0)
+        self.total_machine_operating_cost += total_machine_cost
+        
         total_production_cost = total_machine_cost
         net_profit = price - total_production_cost
         self.revenue_events.append({
@@ -565,10 +569,13 @@ class FinancialTracker:
                 perf['profit_per_unit'] = 0
         return {
             'total_revenue': self.total_revenue, 'total_costs': self.total_costs,
-            'total_downtime_cost': self.total_downtime_cost, 'net_profit': net_profit,
+            'net_profit': net_profit,
             'profit_margin': profit_margin, 'revenue_per_hour': revenue_per_hour,
             'profit_per_hour': profit_per_hour, 'product_performance': product_performance,
             'simulation_time': simulation_time,
+            'total_procurement_cost': self.total_procurement_cost,
+            'total_machine_operating_cost': self.total_machine_operating_cost,
+            'total_downtime_cost': self.total_downtime_cost,
             'total_stockout_cost': self.total_stockout_cost
         }
     def get_total_labor_cost(self):
@@ -760,6 +767,7 @@ class InventoryManager:
             initial_stock = config.get('initial_stock', 0)
             self.stock[material] = initial_stock
         self.reorder_process = env.process(self._monitor_stock_levels())
+        
     def _calculate_material_forecasts(self):
         if not self.planning_data or not self.planning_data.forecasted_demand_history: return {}
         product_forecasts, forecast_days = {}, len(self.planning_data.forecasted_demand_history)
@@ -775,6 +783,14 @@ class InventoryManager:
         if forecast_days > 0:
             for m, d in material_forecasts.items(): annualized[m] = (d / forecast_days) * 365
         return annualized
+
+    def _log_inventory_value(self):
+        current_total_value = 0
+        for material, level in self.stock.items():
+            cost_per_unit = self.raw_materials.get(material, {}).get('cost_per_unit', 0)
+            current_total_value += level * cost_per_unit
+        self.inventory_value_log.append((self.env.now, current_total_value))
+        
     def consume_materials(self, required_materials: dict, quantity: int = 1, product_type: str = "Unknown", stage: str = "Unknown"):
         shortages = []
         for mat, amt in required_materials.items():
@@ -806,7 +822,10 @@ class InventoryManager:
                 'product': product_type, 'stage': stage
             })
             print(f"INVENTORY: Consumed {consumed:.2f} {mat} for {product_type} at {stage} - Stock: {self.stock[mat]:.2f}")
+
+        self._log_inventory_value()
         return True 
+        
     def get_stock_level(self, material):
         return self.stock.get(material, 0)
     def get_on_order_quantity(self, material):
@@ -823,6 +842,9 @@ class InventoryManager:
                 self.stock[order['material']] += order['quantity']
                 order['status'] = 'delivered'
                 order['actual_delivery'] = self.env.now
+
+                self._log_inventory_value()
+                
                 print(f"DELIVERY: Received {order['quantity']:.2f} {order['material']} - Stock: {self.stock[order['material']]:.2f}")
                 return order
         return None
@@ -935,11 +957,7 @@ class InventoryManager:
                     else:
                         print(f"INVENTORY ({method}): {item_name} stock ({level}) triggered order for {order_qty} units.")
                         self.env.process(self.replenish(item_name, order_qty))
-            current_total_value = 0
-            for material, level in self.stock.items():
-                cost_per_unit = self.raw_materials.get(material, {}).get('cost_per_unit', 0)
-                current_total_value += level * cost_per_unit
-            self.inventory_value_log.append((self.env.now, current_total_value))
+            
             yield self.env.timeout(1) 
     def _get_lead_time_from_supplier(self, supplier_name):
         try:
@@ -1130,6 +1148,8 @@ class SupplyChainManager:
             if inventory_position < target_level:
                 order_qty = target_level - inventory_position
                 self._trigger_procurement(material, order_qty)
+
+                
 class TransportationManager:
     def __init__(self, env, worker_pool, financial_tracker, inventory_manager, config,environmental=None):
         self.env = env

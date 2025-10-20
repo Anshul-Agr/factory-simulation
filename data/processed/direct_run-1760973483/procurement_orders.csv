@@ -1,0 +1,7 @@
+order_id,actual_delivery,cost,expected_delivery,material,order_time,quantity,status,supplier
+PO-1-Steel_Sheet,81.19492993473403,750.0,,Steel_Sheet,59,125.0,delivered,Supplier_NA_Reliable
+PO_1,163.23158268355414,300.0,163.23158268355414,Paint,96,100.0,delivered,Supplier_EU_Standard
+PO-3-Steel_Sheet,220.59967904133632,750.0,,Steel_Sheet,201,125.0,delivered,Supplier_NA_Reliable
+PO_2,355.87560759474366,300.0,355.87560759474366,Paint,288,100.0,delivered,Supplier_EU_Standard
+PO-5-Steel_Sheet,391.2015869117663,774.0,,Steel_Sheet,367,129.0,delivered,Supplier_NA_Reliable
+PO_3,,300.0,552.8689055229605,Paint,480,100.0,pending,Supplier_EU_Standard

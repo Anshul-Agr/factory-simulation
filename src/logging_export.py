@@ -188,11 +188,11 @@ def _evaluate_alerts(metrics, env_time, financial_summary, qualitytracker, envir
                 if dq and max(v for _, v in dq) >= 8:
                     stage = name.split(":",1)[1]
                     metrics.raise_alert(f"queue_high:{stage}", "medium", "Queue surge", f"{stage} queue >= 8", env_time, meta={"window_h": w})
-    pm = 0.0
-    if isinstance(financial_summary, dict):
-        pm = financial_summary.get("profit_margin", financial_summary.get("profitmargin", 0.0))
-    if pm < 5.0:
-        metrics.raise_alert("profit_margin_low", "high", "Profit margin low", f"Margin {pm:.1f}% < 5%", env_time)
+    pm = metrics.gauges.get("profit_margin", 0.0)
+
+    if (pm * 100) < 5.0:
+        metrics.raise_alert("profit_margin_low", "high", "Profit margin low", f"Margin {pm*100:.1f}% < 5%", env_time)
+
     if qualitytracker is not None:
         try:
             k = qualitytracker.kpis()
@@ -210,6 +210,7 @@ def _evaluate_alerts(metrics, env_time, financial_summary, qualitytracker, envir
         except Exception:
             pass
     return metrics.alerts
+    
 def export_all(output_dir: str,
                job_logger,
                machines,
@@ -300,14 +301,34 @@ def export_all(output_dir: str,
     env_kpis = environmental.compute_kpis(env_time) if environmental else {}
     combined_kpis = {**financial_summary, "environment": env_kpis}
     _write_json(os.path.join(output_dir, "kpis.json"), combined_kpis)
-    latest_worker_util = 0.0
-    if worker_pool and hasattr(worker_pool, 'workers'):
-        total_workers = max(1, len(worker_pool.workers))
-        working_workers = sum(1 for w in worker_pool.workers.values() if getattr(w, "is_working", False))
-        latest_worker_util = working_workers / total_workers
-        if metrics:
-            metrics.observe("worker_utilization", latest_worker_util, env_time)
-        print(f"Dashboard: Worker utilization calculated at {latest_worker_util:.3f}")
+    
+    avg_worker_util = 0.0
+    if metrics and 'worker_utilization' in metrics.series:
+        util_series = metrics.series['worker_utilization']
+        if util_series:
+            
+            total_weighted_value = 0
+            last_ts = 0 
+            last_value = util_series[0][1]
+
+            
+            for ts, value in util_series:
+                duration = ts - last_ts
+                if duration > 0:
+                    total_weighted_value += last_value * duration
+                last_ts = ts
+                last_value = value
+            
+            
+            final_duration = env_time - last_ts
+            if final_duration > 0:
+                total_weighted_value += last_value * final_duration
+            
+            if env_time > 0:
+                avg_worker_util = total_weighted_value / env_time
+
+    print(f"Dashboard: Average worker utilization calculated as {avg_worker_util:.3f}")
+
     latest_queues = {}
     if metrics:
         for k, pts in metrics.series.items():
@@ -319,7 +340,7 @@ def export_all(output_dir: str,
         "operational": {
             "oee_nowcast": _compute_operational_nowcast(machines, env_time).get("plant", {}).get("oee_nowcast", 0.0),
             "queues": latest_queues,
-            "worker_utilization": latest_worker_util
+            "worker_utilization": avg_worker_util
         },
         "quality": qualitytracker.kpis() if qualitytracker else {},
         "financial": financial_summary,

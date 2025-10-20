@@ -1,3 +1,0 @@
-product,customer_satisfaction,defect_rate,escape_rate,fpy,produced,return_rate,returns,rework_rate,rty_proxy,scrap_rate,shipped_good,shipped_suspect
-ProductA,100.0,0.016483516483516484,0.0,0.9835164835164835,182,0.0,0,0.0,0.9835164835164835,0.0,0,0
-ProductB,100.0,0.0196078431372549,0.0,0.9803921568627451,102,0.0,0,0.0,0.9803921568627451,0.0,0,0

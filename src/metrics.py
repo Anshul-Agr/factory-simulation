@@ -166,6 +166,7 @@ class ComprehensiveKPIs:
             summary = self.trackers['financial'].get_financial_summary(current_time)
             self.metrics_bus.set_gauge('profit_per_hour', summary.get('profit_per_hour', 0), current_time)
             self.metrics_bus.set_gauge('net_profit', summary.get('net_profit', 0), current_time)
+            self.metrics_bus.set_gauge('profit_margin', summary.get('profit_margin', 0), current_time)
     def _calculate_plant_oee(self, t: float) -> dict:
         from main import compute_oee_from_timeline 
         all_oee_data = []

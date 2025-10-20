@@ -1,0 +1,96 @@
+{
+  "cost_composition_snapshot": [
+    {
+      "cost_component": "Labor",
+      "value": 91800
+    },
+    {
+      "cost_component": "Raw Materials",
+      "value": 900.0
+    },
+    {
+      "cost_component": "Machine Operation",
+      "value": 140012.07522111508
+    },
+    {
+      "cost_component": "Downtime",
+      "value": 19014.0
+    },
+    {
+      "cost_component": "Stockouts",
+      "value": 0.0
+    },
+    {
+      "cost_component": "External Failures (Refunds)",
+      "value": 0
+    }
+  ],
+  "downtime_pareto": [
+    {
+      "machine": "Assembling_Machine1",
+      "cost": 2752.0
+    },
+    {
+      "machine": "Assembling_Machine3",
+      "cost": 2132.0
+    },
+    {
+      "machine": "Cutting_Machine3",
+      "cost": 1600.0
+    },
+    {
+      "machine": "Routing_Machine1",
+      "cost": 1020.0
+    },
+    {
+      "machine": "Painting_Machine3",
+      "cost": 1016.0
+    },
+    {
+      "machine": "Painting_Machine1",
+      "cost": 1016.0
+    },
+    {
+      "machine": "Assembling_Machine4",
+      "cost": 892.0
+    },
+    {
+      "machine": "Assembling_Machine2",
+      "cost": 892.0
+    },
+    {
+      "machine": "Cutting_Machine4",
+      "cost": 800.0
+    },
+    {
+      "machine": "Routing_Machine2",
+      "cost": 510.0
+    },
+    {
+      "machine": "Painting_Machine2",
+      "cost": 508.0
+    },
+    {
+      "machine": "Painting_Machine4",
+      "cost": 508.0
+    },
+    {
+      "machine": "Cutting_Machine1",
+      "cost": 400.0
+    }
+  ],
+  "contribution_margin_by_product": [
+    {
+      "product": "ProductB",
+      "unit_contribution_margin": 250
+    },
+    {
+      "product": "ProductA",
+      "unit_contribution_margin": 300
+    }
+  ],
+  "maintenance_vs_failure_costs": {
+    "total_preventive_maintenance_cost": 1360.0,
+    "total_corrective_failure_cost": 17654.0
+  }
+}

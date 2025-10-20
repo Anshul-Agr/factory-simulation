@@ -1,13 +1,13 @@
 {
   "by_product": {
     "ProductA": {
-      "produced": 182,
-      "defect_rate": 0.016483516483516484,
+      "produced": 416,
+      "defect_rate": 0.009615384615384616,
       "rework_rate": 0.0,
       "scrap_rate": 0.0,
       "escape_rate": 0.0,
-      "fpy": 0.9835164835164835,
-      "rty_proxy": 0.9835164835164835,
+      "fpy": 0.9903846153846154,
+      "rty_proxy": 0.9903846153846154,
       "shipped_good": 0,
       "shipped_suspect": 0,
       "returns": 0,
@@ -15,13 +15,13 @@
       "customer_satisfaction": 100.0
     },
     "ProductB": {
-      "produced": 102,
-      "defect_rate": 0.0196078431372549,
+      "produced": 294,
+      "defect_rate": 0.013605442176870748,
       "rework_rate": 0.0,
       "scrap_rate": 0.0,
       "escape_rate": 0.0,
-      "fpy": 0.9803921568627451,
-      "rty_proxy": 0.9803921568627451,
+      "fpy": 0.9863945578231292,
+      "rty_proxy": 0.9863945578231292,
       "shipped_good": 0,
       "shipped_suspect": 0,
       "returns": 0,

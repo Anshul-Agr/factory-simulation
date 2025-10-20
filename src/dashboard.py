@@ -252,7 +252,7 @@ def compute_core_metrics(bundle: Dict[str, Any]) -> Dict[str, Any]:
         "total_costs": total_costs,
         "total_downtime_cost": total_downtime_cost,
         "net_profit": net_profit,
-        "profit_margin_percent": profit_margin,
+        "profit_margin": profit_margin,
         "revenue_per_hour": revenue_per_hour,
         "profit_per_hour": profit_per_hour,
         "total_emissions_kg": total_emissions_kg,
@@ -333,7 +333,7 @@ def compute_financial_deep(fin_summary: Dict[str, Any], df_downtime: Any, df_ord
     total_revenue = safe_float(fin_summary.get("total_revenue", 0.0))
     total_costs = safe_float(fin_summary.get("total_costs", 0.0))
     net_profit = total_revenue - total_costs
-    profit_margin_percent = perc(net_profit, total_revenue)
+    profit_margin = perc(net_profit, total_revenue)
     fill_rate_percent = None
     if isinstance(df_orders, pd.DataFrame) and not df_orders.empty:
         ic = "items_completed" if "items_completed" in df_orders.columns else None
@@ -353,7 +353,7 @@ def compute_financial_deep(fin_summary: Dict[str, Any], df_downtime: Any, df_ord
         "total_revenue": total_revenue,
         "total_costs": total_costs,
         "net_profit": net_profit,
-        "profit_margin_percent": profit_margin_percent,
+        "profit_margin": profit_margin,
         "downtime_cost_total": downtime_cost_recorded,
         "order_fill_rate_percent": fill_rate_percent
     }
@@ -454,7 +454,7 @@ def assemble_dashboard(output_dir: str) -> Dict[str, Any]:
             "total_revenue": fin_deep["total_revenue"],
             "total_costs": fin_deep["total_costs"],
             "net_profit": fin_deep["net_profit"],
-            "profit_margin_percent": fin_deep["profit_margin_percent"],
+            "profit_margin": fin_deep["profit_margin"],
             "downtime_cost_total": fin_deep["downtime_cost_total"],
             "order_fill_rate_percent": fin_deep["order_fill_rate_percent"],
             "revenue_per_hour": core["revenue_per_hour"],
@@ -511,7 +511,7 @@ def run_streamlit(output_dir: str):
     oee_nowcast = float(assembled.get("oee_nowcast") or 0.0)
     worker_util = float(assembled.get("worker_utilization") or 0.0)
     net_profit = float(fin.get("net_profit") or 0.0)
-    profit_margin = float(fin.get("profit_margin_percent") or 0.0)
+    profit_margin = float(fin.get("profit_margin") or 0.0)
     rev_hr = float(fin.get("revenue_per_hour") or assembled.get("revenue_per_hour") or 0.0)
     prof_hr = float(fin.get("profit_per_hour") or assembled.get("profit_per_hour") or 0.0)
     emissions = float(env.get("total_emissions_kg") or 0.0)
