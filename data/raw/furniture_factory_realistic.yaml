@@ -1,0 +1,123 @@
+name: "Furniture_Factory"
+
+run:
+  SIMULATION_TIME: 400 # Run for 4 weeks (1 full month of operation)
+  RANDOM_SEED: 4242
+
+# THIS IS THE TOP-LEVEL KEY
+overrides:
+
+  # All items below MUST be indented under 'overrides'
+
+  # --- FURNITURE PRODUCT PORTFOLIO ---
+  PRODUCTS:
+    Oak_Dining_Table:
+      routing: ['Cutting', 'Routing', 'Assembling', 'Painting']
+      machine_times: {'Cutting': [1.5, 2], 'Routing': [1, 1.5], 'Assembling': [2, 3], 'Painting': [1.5, 2.5]}
+      setup_times: {'Cutting': 0.5, 'Routing': 0.25, 'Assembling': 0.5, 'Painting': 0.75}
+      unload_times: {'Cutting': 0.1, 'Routing': 0.1, 'Assembling': 0.2, 'Painting': 0.15}
+      unit_price: 850
+      unit_cogs: 420
+    Pine_Bookshelf:
+      routing: ['Cutting', 'Assembling', 'Painting']
+      machine_times: {'Cutting': [0.75, 1], 'Assembling': [1.5, 2], 'Painting': [1, 1.5]}
+      setup_times: {'Cutting': 0.4, 'Assembling': 0.4, 'Painting': 0.6}
+      unload_times: {'Cutting': 0.1, 'Assembling': 0.15, 'Painting': 0.1}
+      unit_price: 400
+      unit_cogs: 180
+    Upholstered_Chair:
+      routing: ['Cutting', 'Assembling']
+      machine_times: {'Cutting': [0.5, 0.8], 'Assembling': [2.5, 3.5]}
+      setup_times: {'Cutting': 0.3, 'Assembling': 1.0}
+      unload_times: {'Cutting': 0.1, 'Assembling': 0.25}
+      unit_price: 320
+      unit_cogs: 150
+
+  # --- OTHER OVERRIDES ---
+  FINANCIAL_CONFIG:
+    labor_cost_per_hour: 22.50
+    downtime_cost_per_hour: 75.00
+    
+  INVENTORY_CONFIG:
+    reorder_points:
+      Wood_Planks: 150
+      Varnish: 50
+      Fabric: 30
+    target_stock_levels:
+      Wood_Planks: 600
+      Varnish: 200
+      Fabric: 100
+
+  MATERIAL_CONSUMPTION:
+    Oak_Dining_Table:
+      Cutting: {'Wood_Planks': 8}
+      Routing: {}
+      Assembling: {}
+      Painting: {'Varnish': 1.5}
+    Pine_Bookshelf:
+      Cutting: {'Wood_Planks': 6}
+      Routing: {}
+      Assembling: {}
+      Painting: {'Varnish': 1}
+    Upholstered_Chair:
+      Cutting: {'Wood_Planks': 2}
+      Routing: {}
+      Assembling: {'Fabric': 1.2}
+      Painting: {}
+
+  MACHINE_DEFINITIONS:
+    Cutting:
+      num_machines: 2
+      mtbf: 350
+      mttr: 6
+      maintenance_cost: 100
+    Routing:
+      num_machines: 2
+      mtbf: 500
+      mttr: 4
+      maintenance_cost: 100
+    Painting:
+      num_machines: 3
+      mtbf: 280
+      mttr: 2
+      maintenance_cost: 100
+    Assembling:
+      num_machines: 4
+      mtbf: 600
+      mttr: 3
+      maintenance_cost: 100
+  
+  RAW_MATERIALS:
+    Wood_Planks:
+      initial_stock: 2000
+      cost_per_unit: 15.0
+      suppliers: ['WoodSupplierA', 'WoodSupplierB']
+      lead_time: [24, 48] # Delivery takes 1-2 days
+      min_order_qty: 100
+    Varnish:
+      initial_stock: 400
+      cost_per_unit: 8.0
+      suppliers: ['PaintCo']
+      lead_time: [12, 36] # Delivery takes 0.5-1.5 days
+      min_order_qty: 20
+    Fabric:
+      initial_stock: 500
+      cost_per_unit: 25.0
+      suppliers: ['TextileInc']
+      lead_time: [48, 72] # Delivery takes 2-3 days
+      min_order_qty: 50
+  
+  WORKER_POOL_CONFIG:
+    total_workers: 12
+    
+  CALENDAR_CONFIG:
+    working_days: [0, 1, 2, 3, 4] # Mon-Fri
+    daily_shifts:
+      - {start: 7, end: 15, breaks: [[12, 12.5]]} # Day shift
+      - {start: 15, end: 23, breaks: [[19, 19.5]]} # Evening shift
+
+  # --- ORDER MANAGEMENT ---
+  # We will use an external CSV for a realistic order book
+  USE_CSV_ORDERS: True
+  CSV_ORDERS_PATH: "furniture_orders_month.csv"
+

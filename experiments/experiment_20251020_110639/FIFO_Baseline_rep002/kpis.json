@@ -1,0 +1,43 @@
+{
+  "simulationtime": 200.0,
+  "totalrevenue": 25500.0,
+  "totalcosts": 58648.46206840762,
+  "netprofit": -33148.46206840762,
+  "environment": {
+    "total_energy_kwh": 7158.301519873322,
+    "total_emissions_kg": 5001.801943911331,
+    "total_waste_kg": 31.06500000000001,
+    "waste_recycled_kg": 14.936150000000021,
+    "water_used_m3": 4.756499999999991,
+    "energy_per_hour_kwh": 35.79150759936661,
+    "emissions_per_hour_kg": 25.00900971955666,
+    "emissions_per_unit_kg": 58.84472875189802,
+    "energy_per_unit_kwh": 84.21531199850968,
+    "per_machine_energy_kwh": {
+      "Assembling_Machine2": 20.139672753714308,
+      "Assembling_Machine4": 16.78010720688792,
+      "Cutting_Machine1": 1981.7025267221793,
+      "Cutting_Machine2": 456.00740890106636,
+      "Cutting_Machine4": 747.660673406527,
+      "Painting_Machine1": 1987.515070353274,
+      "Painting_Machine2": 66.86720343041515,
+      "Routing_Machine1": 1555.6376811349128,
+      "Routing_Machine2": 304.7287759643997
+    },
+    "per_machine_emissions_kg": {
+      "Assembling_Machine2": 14.097770927600015,
+      "Assembling_Machine4": 11.746075044821543,
+      "Cutting_Machine1": 1387.1917687055222,
+      "Cutting_Machine2": 319.20518623074645,
+      "Cutting_Machine4": 523.362471384569,
+      "Painting_Machine1": 1391.2605492472949,
+      "Painting_Machine2": 46.8070424012906,
+      "Routing_Machine1": 1088.9463767944374,
+      "Routing_Machine2": 213.3101431750798
+    },
+    "per_product_units": {
+      "ProductB": 32,
+      "ProductA": 53
+    }
+  }
+}

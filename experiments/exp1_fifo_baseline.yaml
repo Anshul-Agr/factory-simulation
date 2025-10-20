@@ -1,0 +1,9 @@
+name: "FIFO_Baseline"
+run:
+  simulation_time: 2500   # Long duration for steady-state
+  warmup_period: 50      # 2% warm-up to exclude initial transient 
+  base_seed: 9001          # Master seed for this experiment
+overrides:
+  QUEUING_CONFIG:
+    default_policy:
+      policy: "FIFO"

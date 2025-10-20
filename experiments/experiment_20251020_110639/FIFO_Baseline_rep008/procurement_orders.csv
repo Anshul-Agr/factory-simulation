@@ -1,0 +1,3 @@
+order_id,actual_delivery,cost,expected_delivery,material,order_time,quantity,status,supplier
+PO-1-Steel_Sheet,87.74890229762008,759.0,,Steel_Sheet,61,126.5,delivered,Supplier_NA_Reliable
+PO_1,159.66951053488617,300.0,159.66951053488617,Paint,96,100.0,delivered,Supplier_EU_Standard

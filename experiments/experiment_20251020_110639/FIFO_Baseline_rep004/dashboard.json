@@ -1,0 +1,193 @@
+{
+  "timestamp": 1760938620.882365,
+  "sim_time": 200.0,
+  "operational": {
+    "oee_nowcast": 0.795625,
+    "queues": {},
+    "worker_utilization": 0.0
+  },
+  "quality": {
+    "by_product": {
+      "ProductA": {
+        "produced": 181,
+        "defect_rate": 0.0055248618784530384,
+        "rework_rate": 0.0,
+        "scrap_rate": 0.0,
+        "escape_rate": 0.0,
+        "fpy": 0.994475138121547,
+        "rty_proxy": 0.994475138121547,
+        "shipped_good": 0,
+        "shipped_suspect": 0,
+        "returns": 0,
+        "return_rate": 0.0,
+        "customer_satisfaction": 100.0
+      },
+      "ProductB": {
+        "produced": 99,
+        "defect_rate": 0.020202020202020204,
+        "rework_rate": 0.0,
+        "scrap_rate": 0.0,
+        "escape_rate": 0.0,
+        "fpy": 0.9797979797979798,
+        "rty_proxy": 0.9797979797979798,
+        "shipped_good": 0,
+        "shipped_suspect": 0,
+        "returns": 0,
+        "return_rate": 0.0,
+        "customer_satisfaction": 100.0
+      }
+    }
+  },
+  "financial": {
+    "simulationtime": 200.0,
+    "totalrevenue": 25200.0,
+    "totalcosts": 57553.902191576126,
+    "netprofit": -32353.902191576126
+  },
+  "environment": {
+    "total_energy_kwh": 8177.897555666472,
+    "total_emissions_kg": 5715.321888966524,
+    "total_waste_kg": 30.950000000000006,
+    "waste_recycled_kg": 14.902000000000019,
+    "water_used_m3": 4.686499999999991,
+    "energy_per_hour_kwh": 40.88948777833236,
+    "emissions_per_hour_kg": 28.57660944483262,
+    "emissions_per_unit_kg": 68.03954629722053,
+    "energy_per_unit_kwh": 97.35592328174371,
+    "per_machine_energy_kwh": {
+      "Assembling_Machine1": 467.49116698133525,
+      "Assembling_Machine2": 115.03847080519388,
+      "Assembling_Machine3": 336.43914546273066,
+      "Cutting_Machine1": 1653.2943858641925,
+      "Cutting_Machine2": 704.3077148968362,
+      "Cutting_Machine4": 642.5477109609019,
+      "Painting_Machine1": 2310.1717466115892,
+      "Routing_Machine1": 1543.9850234276796,
+      "Routing_Machine3": 382.8941906560591
+    },
+    "per_machine_emissions_kg": {
+      "Assembling_Machine1": 327.24381688693467,
+      "Assembling_Machine2": 80.5269295636357,
+      "Assembling_Machine3": 235.50740182391144,
+      "Cutting_Machine1": 1157.3060701049335,
+      "Cutting_Machine2": 493.0154004277853,
+      "Cutting_Machine4": 449.78339767263134,
+      "Painting_Machine1": 1617.120222628114,
+      "Routing_Machine1": 1080.7895163993742,
+      "Routing_Machine3": 268.02593345924134
+    },
+    "per_product_units": {
+      "ProductB": 30,
+      "ProductA": 54
+    }
+  },
+  "trends": {
+    "windows": {
+      "4.0": {
+        "oee_slope": 40000000.00000003,
+        "wip_avg": 0.0,
+        "worker_util_avg": 0.6554621848739496,
+        "queue_p90_by_stage": {}
+      },
+      "24.0": {
+        "oee_slope": 40000000.00000003,
+        "wip_avg": 0.0,
+        "worker_util_avg": 0.7771333885666942,
+        "queue_p90_by_stage": {}
+      }
+    }
+  },
+  "alerts": [
+    {
+      "key": "profit_margin_low",
+      "severity": "high",
+      "title": "Profit Margin Critically Low",
+      "message": "Profit margin has fallen to -12780.17%.",
+      "first_seen": 60,
+      "latest_seen": 200.0,
+      "count": 19,
+      "meta": {
+        "margin": -127.80169261341567
+      }
+    },
+    {
+      "key": "emissions_high",
+      "severity": "low",
+      "title": "Emissions per unit high",
+      "message": "68.04 kg/unit > 2.0",
+      "first_seen": 200.0,
+      "latest_seen": 200.0,
+      "count": 1,
+      "meta": {}
+    }
+  ],
+  "analytical_comparison": {
+    "__jackson_network": {
+      "system_wip_analytical": 3.5646210160029916,
+      "nodes": {
+        "Assembling": {
+          "effective_lambda": 0.0,
+          "mu": 0,
+          "c": 4,
+          "error": "Arrival rate must be less than total service capacity (\u03bb < c*\u03bc)"
+        },
+        "Cutting": {
+          "effective_lambda": 0.5264778930131004,
+          "mu": 0.19359569744082056,
+          "c": 4,
+          "rho": 0.6798677604573795,
+          "Lq": 0.8451499741734737,
+          "Wq": 1.6052905267048767,
+          "L": 3.5646210160029916,
+          "W": 6.7706945786502235,
+          "C_c": 0.3979593822768174,
+          "model": "M/M/4"
+        },
+        "Painting": {
+          "effective_lambda": 0.52,
+          "mu": 0.09522894056951572,
+          "c": 4,
+          "error": "Arrival rate must be less than total service capacity (\u03bb < c*\u03bc)"
+        },
+        "Routing": {
+          "effective_lambda": 0.5306673034934498,
+          "mu": 0.12597535569978308,
+          "c": 4,
+          "error": "Arrival rate must be less than total service capacity (\u03bb < c*\u03bc)"
+        }
+      },
+      "routing_matrix_P": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.3434343434343434,
+          0.6565656565656566
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.36082474226804123,
+          0.6391752577319587,
+          0.0
+        ]
+      ],
+      "external_arrivals_alpha": [
+        0.0,
+        0.335,
+        0.0,
+        0.185
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "cost_composition_snapshot": [
+    {
+      "cost_component": "Downtime",
+      "value": 0
+    },
+    {
+      "cost_component": "Procurement",
+      "value": 0
+    },
+    {
+      "cost_component": "Stockout",
+      "value": 0
+    },
+    {
+      "cost_component": "Labor",
+      "value": 34000
+    }
+  ],
+  "downtime_pareto": [
+    {
+      "machine": "Assembling_Machine2",
+      "cost": 0.0
+    },
+    {
+      "machine": "Cutting_Machine4",
+      "cost": 0.0
+    },
+    {
+      "machine": "Assembling_Machine1",
+      "cost": 0.0
+    },
+    {
+      "machine": "Assembling_Machine4",
+      "cost": 0.0
+    }
+  ],
+  "contribution_margin_by_product": [],
+  "maintenance_vs_failure_costs": {
+    "total_maintenance_cost": 0,
+    "total_failure_cost": 75
+  }
+}

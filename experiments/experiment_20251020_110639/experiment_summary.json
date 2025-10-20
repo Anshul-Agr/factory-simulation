@@ -1,0 +1,54 @@
+{
+    "WSPT_Profit_Priority": {
+        "simulationtime": {
+            "mean": 200.0,
+            "stdev": 0.0,
+            "n": 10,
+            "ci95_half_width": 0.0
+        },
+        "totalrevenue": {
+            "mean": 25710.0,
+            "stdev": 1225.1530516633422,
+            "n": 10,
+            "ci95_half_width": 876.4216964000614
+        },
+        "totalcosts": {
+            "mean": 54921.802224217914,
+            "stdev": 3546.1884743772243,
+            "n": 10,
+            "ci95_half_width": 2536.790415082003
+        },
+        "netprofit": {
+            "mean": -29211.802224217914,
+            "stdev": 2828.664351576298,
+            "n": 10,
+            "ci95_half_width": 2023.5045786231344
+        }
+    },
+    "FIFO_Baseline": {
+        "simulationtime": {
+            "mean": 200.0,
+            "stdev": 0.0,
+            "n": 10,
+            "ci95_half_width": 0.0
+        },
+        "totalrevenue": {
+            "mean": 25710.0,
+            "stdev": 1225.1530516633422,
+            "n": 10,
+            "ci95_half_width": 876.4216964000614
+        },
+        "totalcosts": {
+            "mean": 54921.802224217914,
+            "stdev": 3546.1884743772243,
+            "n": 10,
+            "ci95_half_width": 2536.790415082003
+        },
+        "netprofit": {
+            "mean": -29211.802224217914,
+            "stdev": 2828.664351576298,
+            "n": 10,
+            "ci95_half_width": 2023.5045786231344
+        }
+    }
+}

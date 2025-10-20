@@ -1,0 +1,9 @@
+name: "WSPT_Profit_Priority"
+run:
+  simulation_time: 2500
+  warmup_period: 50
+  base_seed: 9001
+overrides:
+  QUEUING_CONFIG:
+    default_policy:
+      policy: "WSPT" # Weighted Shortest Processing Time (prioritizes high profit/short time)

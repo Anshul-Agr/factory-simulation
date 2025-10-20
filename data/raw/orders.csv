@@ -1,0 +1,4 @@
+order_id,release_time,product,quantity,due_in_hours
+D1,0,ProductA,10,48
+D1,0,ProductB,10,48
+D2,8,ProductC,31,48
