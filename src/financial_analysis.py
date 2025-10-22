@@ -236,8 +236,9 @@ class FinancialAnalysis:
         for prod_id, data in prod_perf.items():
             margin_data.append({
                 "product": prod_id,
-                # Using the profit_per_unit from config as a proxy for contribution margin
-                "unit_contribution_margin": self.product_configs.get(prod_id, {}).get('profit_per_unit', 0)
+                
+                "unit_contribution_margin": data.get('profit_per_unit', 0)
+
             })
         viz_data['contribution_margin_by_product'] = margin_data
 

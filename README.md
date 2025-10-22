@@ -114,7 +114,7 @@ The dashboard provides a real-time view of the simulation outputs.
 1.  First, run a simulation to generate the necessary output files.
 2.  Then, launch the dashboard and point it to the output directory:
 
-streamlit run dashboard.py -- --output_dir data/processed
+streamlit run src/dashboard.py -- --output_dir data/processed
 
 Alternatively, the dashboard can be served as an API using FastAPI:
 python dashboard.py --serve --output_dir data/processed

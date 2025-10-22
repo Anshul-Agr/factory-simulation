@@ -233,7 +233,6 @@ SETUP_MATRIX = {
 }
 
 # PRODUCT DEFINITION AND CONFIGURATION
-# NOTE: Profit per unit here is for WSPT calculations only. Profits are dynamically calculated and ppu is calculated seperately.
 
 PRODUCTS = {
     'ProductA': {
@@ -242,7 +241,6 @@ PRODUCTS = {
         'load_times': {'Cutting': (1, 2), 'Routing': (1, 2), 'Painting': (1, 2)},
         'unload_times': {'Cutting': (1, 2), 'Routing': (1, 2), 'Painting': (1, 2)},
         'setup_times': {'Cutting': 1, 'Routing': 2, 'Painting': 1},
-        'profit_per_unit': 300,
         'color': 'skyblue',
         'unit_price': 900
 
@@ -255,7 +253,6 @@ PRODUCTS = {
         'load_times': {'Cutting': (1, 2), 'Routing': (1, 2), 'Painting': (1, 2)},
         'unload_times': {'Cutting': (1, 2), 'Routing': (1, 2), 'Painting': (1, 2)},
         'setup_times': {'Cutting': 2, 'Routing': 1, 'Painting': 2},
-        'profit_per_unit': 250,
         'color': 'salmon',
         'unit_price': 1000
     },
@@ -265,7 +262,6 @@ PRODUCTS = {
         'load_times': {'Cutting': (1, 1), 'Painting': (2, 2)},
         'unload_times': {'Cutting': (1, 1), 'Painting': (2, 2)},
         'setup_times': {'Cutting': 1.5, 'Painting': 1.5},
-        'profit_per_unit': 90, # USED FOR WSPT etc.
         'color': 'lightgreen',
         'unit_price': 1200
     },
@@ -275,7 +271,6 @@ PRODUCTS = {
         'load_times': {'Cutting': (1, 2), 'Assembling': (1, 1), 'Painting': (1, 2)},
         'unload_times': {'Cutting': (1, 2), 'Assembling': (1, 1), 'Painting': (1, 2)},
         'setup_times': {'Cutting': 1, 'Assembling': 2, 'Painting': 1.5},
-        'profit_per_unit': 150,
         'color': 'gold',
         'unit_price': 1500
     }

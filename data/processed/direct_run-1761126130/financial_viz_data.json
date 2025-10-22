@@ -82,11 +82,11 @@
   "contribution_margin_by_product": [
     {
       "product": "ProductB",
-      "unit_contribution_margin": 250
+      "unit_contribution_margin": 418.42900785563756
     },
     {
       "product": "ProductA",
-      "unit_contribution_margin": 300
+      "unit_contribution_margin": 281.02014724076275
     }
   ],
   "maintenance_vs_failure_costs": {

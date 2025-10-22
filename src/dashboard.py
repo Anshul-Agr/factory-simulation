@@ -80,6 +80,8 @@ FILENAME_ALIASES = {
     "shipped_goods.csv": ["shipped_goods.csv", "shipped.csv"],
     "environment_totals.csv": ["environment_totals.csv", "environmenttotals.csv"],
     "environment_states.csv": ["environment_states.csv", "environmentstates.csv"],
+    "advanced_financials.json": ["advanced_financials.json"],
+    "financial_viz_data.json": ["financial_viz_data.json"],
     "env_transport.csv": ["env_transport.csv", "envtransport.csv"],
     "env_materials.csv": ["env_materials.csv", "envmaterials.csv"],
     "quality_events.csv": ["quality_events.csv", "qualityevents.csv"],
@@ -393,6 +395,10 @@ def compute_worker_util_from_jobs(df_jobs: Any, horizon_end: Optional[float]) ->
     util = max(0.0, min(1.0, busy / planned))
     return util
 def assemble_dashboard(output_dir: str) -> Dict[str, Any]:
+    print(f"--- ABSOLUTE PROOF: ASSEMBLE_DASHBOARD IS USING THIS DIRECTORY ---")
+    print(output_dir)
+    print("--------------------------------------------------------------------")
+
     bundle = load_exports(output_dir)
     core = compute_core_metrics(bundle)
     df_states = bundle.get("machine_states.csv")
@@ -471,6 +477,8 @@ def assemble_dashboard(output_dir: str) -> Dict[str, Any]:
         "_source_dir": output_dir
     }
     out['analytical_comparison'] = bundle.get("dashboard.json", {}).get("analytical_comparison")
+    out['advanced_financials'] = bundle.get('advanced_financials')
+    out['financial_viz_data'] = bundle.get('financial_viz_data')
     print("[dbg] sim_time_hours =", core["sim_time_hours"])
     print("[dbg] totals:", core["total_revenue"], core["total_costs"], core["net_profit"])
     print("[dbg] states rows =", 0 if not isinstance(df_states, pd.DataFrame) else len(df_states))
@@ -553,60 +561,102 @@ def run_streamlit(output_dir: str):
     st.json(inv)
     st.subheader("🔬 Queueing Theory vs. Simulation Analysis")
     analytical_data = assembled.get("analytical_comparison")
+    
     if analytical_data:
         st.info(
+            """
+            This section compares performance metrics predicted by mathematical **analytical models**
+            against the **simulation ground truth** for each individual machine. Large differences 
+            can reveal where the simulation's complexities (like breakdowns or worker logic) 
+            deviate from the ideal model's assumptions.
+            """
         )
-        sorted_machines = sorted(analytical_data.keys())
-        for machine_name in sorted_machines:
-            data = analytical_data[machine_name]
-            model_type = data.get('analytical_prediction', {}).get('model', 'N/A')
-            with st.expander(f"**Machine: {machine_name}** (Model: **{model_type}**)", expanded=True):
-                sim_data = data.get('sim_ground_truth', {})
-                prediction_data = data.get('analytical_prediction', {})
-                params = data.get('parameters_used', {})
-                sim_wq = sim_data.get('avg_wait_time_Wq', 0)
-                analytical_wq = prediction_data.get('Wq', 0)
-                delta_str = "N/A"
-                if isinstance(analytical_wq, (int, float)) and isinstance(sim_wq, (int, float)):
-                    delta_val = analytical_wq - sim_wq
-                    delta_str = f"{delta_val:.3f} hrs"
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write("
-                    st.metric(
-                        label="Avg. Wait in Queue (Wq)",
-                        value=f"{sim_wq:.3f} hrs"
-                    )
-                with col2:
-                    st.write(f"
-                    st.metric(
-                        label="Predicted Avg. Wait in Queue (Wq)",
-                        value=f"{analytical_wq:.3f} hrs" if isinstance(analytical_wq, (int, float)) else "Error",
-                        delta=delta_str,
-                        delta_color="inverse",
-                        help="The difference between the analytical prediction and the simulated reality."
-                    )
-                st.markdown("---")
-                st.write("
-                param_source = params.get("source", "N/A")
-                st.caption(f"Parameter Source: `{param_source.upper()}`")
-                p_col1, p_col2, p_col3, p_col4 = st.columns(4)
-                p_col1.metric("λ (Arrival Rate)", f"{params.get('lam', 0):.3f}")
-                p_col2.metric("μ (Service Rate)", f"{params.get('mu', 0):.3f}")
-                p_col3.metric("Ca² (Arrival SCV)", f"{params.get('arrival_scv', 0):.3f}")
-                p_col4.metric("Cs² (Service SCV)", f"{params.get('service_scv', 0):.3f}")
-                if "error" in prediction_data:
-                    st.error(f"**Model Calculation Error:** {prediction_data['error']}")
-                else:
-                    with st.container():
-                        st.write("
-                        st.json(prediction_data)
+    
+        machine_keys = [k for k in analytical_data.keys() if k != "__jackson_network"]
+    
+        if not machine_keys:
+            st.warning(
+                "**No Data for Individual Machine Analysis**\n\n"
+                "The simulation did not generate enough data to automatically parameterize the analytical models "
+                "for any individual machine. This is a common and normal outcome in scenarios with low machine utilization "
+                "or when a large number of parallel machines share the workload."
+            )
+        else:
+            for machine_name in sorted(machine_keys):
+                data = analytical_data[machine_name]
+                model_type = data.get('analytical_prediction', {}).get('model', 'N/A')
+    
+                with st.expander(f"**Machine: {machine_name}** (Model: **{model_type}**)", expanded=True):
+                    
+                    sim_data = data.get('sim_ground_truth', {})
+                    prediction_data = data.get('analytical_prediction', {})
+                    params = data.get('parameters_used', {})
+                    
+                   
+                    sim_wq = sim_data.get('avg_wait_time_Wq', 0)
+                    analytical_wq = prediction_data.get('Wq', 0)
+                    
+                   
+                    if 'Not enough data for auto-parameterization' in prediction_data.get('error', ''):
+                        st.info(
+                            "Not enough data was collected during the simulation to automatically parameterize "
+                            "and run the analytical model for this specific machine."
+                        )
+                    
+                    elif abs(sim_wq) < 1e-6 and all(abs(params.get(p, 0)) < 1e-6 for p in ['lam', 'mu']):
+                        st.info(
+                            "No queueing activity was recorded for this machine. This typically happens if the "
+                            "machine had zero utilization or received no jobs."
+                        )
+                   
+                    else:
+                        delta_str = "N/A"
+                        if isinstance(analytical_wq, (int, float)) and isinstance(sim_wq, (int, float)):
+                            delta_val = analytical_wq - sim_wq
+                            delta_str = f"{delta_val:.3f} hrs"
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.write("##### Simulation (Ground Truth)")
+                            st.metric(
+                                label="Avg. Wait in Queue (Wq)",
+                                value=f"{sim_wq:.3f} hrs"
+                            )
+                        with col2:
+                            st.write(f"##### Analytical Model ({model_type})")
+                            st.metric(
+                                label="Predicted Avg. Wait in Queue (Wq)",
+                                value=f"{analytical_wq:.3f} hrs" if isinstance(analytical_wq, (int, float)) else "Error",
+                                delta=delta_str,
+                                delta_color="inverse",
+                                help="The difference between the analytical prediction and the simulated reality."
+                            )
+                        
+                        st.markdown("---")
+                        st.write("###### Parameters Used for Calculation")
+                        param_source = params.get("source", "N/A")
+                        st.caption(f"Parameter Source: `{param_source.upper()}`")
+                        p_col1, p_col2, p_col3, p_col4 = st.columns(4)
+                        p_col1.metric("λ (Arrival Rate)", f"{params.get('lam', 0):.3f}")
+                        p_col2.metric("μ (Service Rate)", f"{params.get('mu', 0):.3f}")
+                        p_col3.metric("Ca² (Arrival SCV)", f"{params.get('arrival_scv', 0):.3f}")
+                        p_col4.metric("Cs² (Service SCV)", f"{params.get('service_scv', 0):.3f}")
+    
+                       
+                        if "error" in prediction_data and 'Not enough data' not in prediction_data['error']:
+                            st.error(f"**Model Calculation Error:** {prediction_data['error']}")
+                        else:
+                            with st.container():
+                                st.write("###### Full Analytical Results (JSON)")
+                                st.json(prediction_data)
     else:
-        st.warning("Analytical queueing comparison data not found. This means the data was not correctly passed into the final export process.")
+        st.warning("Analytical queueing comparison data not found in the run output.")
+
     st.caption(f"Source: {assembled.get('_source_dir')}")
     st.header("Advanced Financial Analysis")
     adv_financials = assembled.get('advanced_financials')
     viz_data = assembled.get('financial_viz_data')
+
     if adv_financials:
         st.subheader("Tier 1 & 2 Financial Metrics")
         col1, col2 = st.columns(2)
@@ -648,7 +698,11 @@ def run_streamlit(output_dir: str):
     st.subheader("SYSTEM-LEVEL ANALYSIS (Jackson Network)")
     jackson_data = assembled.get("analytical_comparison", {}).get("__jackson_network")
     if jackson_data and 'error' not in jackson_data:
-        st.info(
+        st.info("""
+            This section analyzes the entire factory as an interconnected **network of queues**.
+            It calculates the *effective arrival rate* (λ) at each station, which includes both
+            external orders and internal transfers from other stations.
+            """
         )
         total_wip = jackson_data.get('system_wip_analytical', 0)
         st.metric(
@@ -658,7 +712,7 @@ def run_streamlit(output_dir: str):
         st.markdown("---")
         node_results = jackson_data.get('nodes', {})
         if node_results:
-            st.write("
+            st.write("##### Per-Station Performance within the Network")
             df_data = []
             for stage, data in node_results.items():
                 df_data.append({
@@ -682,11 +736,11 @@ def run_streamlit(output_dir: str):
                 .background_gradient(subset=['ρ (Utilization)'], cmap='Reds')
             )
         with st.expander("View Raw Network Parameters (Routing Matrix & Arrivals)"):
-            st.write("
+            st.write("###### External Arrival Rates (α)")
             st.json({
                 stage: rate for stage, rate in zip(jackson_data.get('nodes', {}).keys(), jackson_data.get('external_arrivals_alpha', []))
             })
-            st.write("
+            st.write("###### Routing Probability Matrix (P)")
             st.write("Rows are 'From', Columns are 'To'")
             p_matrix = jackson_data.get('routing_matrix_P', [])
             stage_names = list(jackson_data.get('nodes', {}).keys())
@@ -839,40 +893,86 @@ def run_streamlit(output_dir: str):
             st.plotly_chart(fig, use_container_width=True, theme="streamlit")
     else:
         st.info("No machine_states.csv available for Gantt.")
+
+
+
     st.subheader("Order Flow (Sankey)")
     df_orders = bundle_viz.get("orders_summary.csv")
     df_fg = bundle_viz.get("finished_goods.csv")
     df_ship = bundle_viz.get("shipped_goods.csv")
-    def items_from_orders(df):
+    
+    
+    def get_item_counts_from_orders(df):
         if not isinstance(df, pd.DataFrame) or df.empty:
             return 0, 0
-        t = pd.to_numeric(df.get("items_total", 0), errors="coerce").fillna(0).sum()
-        d = pd.to_numeric(df.get("items_completed", 0), errors="coerce").fillna(0).sum()
-        if t > 0:
-            return int(t), int(d)
-        n = len(df)
-        return n, None
-    orders_total, orders_done = items_from_orders(df_orders)
-    finished = len(df_fg) if isinstance(df_fg, pd.DataFrame) else 0
-    shipped = len(df_ship) if isinstance(df_ship, pd.DataFrame) else 0
-    if orders_done is not None:
-        finished = min(finished, orders_done)
-        shipped = min(shipped, orders_total)
+        total_demand = pd.to_numeric(df.get("items_total", 0), errors="coerce").fillna(0).sum()
+        total_completed = pd.to_numeric(df.get("items_completed", 0), errors="coerce").fillna(0).sum()
+        return int(total_demand), int(total_completed)
+    
+   
+    total_demand, total_completed = get_item_counts_from_orders(df_orders)
+    items_shipped = len(df_ship) if isinstance(df_ship, pd.DataFrame) else 0
+    
+  
+    backlog = max(0, total_demand - total_completed)
+    in_finished_goods = max(0, total_completed - items_shipped)
+    
     import plotly.graph_objects as go
-    labels = ["Orders", "Finished", "Shipped"]
-    source = [0, 1]
-    target = [1, 2]
-    value = [max(finished, 0), max(shipped, 0)]
-    value = [v if v > 0 else 0.0001 for v in value]
-    fig2 = go.Figure(data=[go.Sankey(
-        node=dict(label=labels, pad=20, thickness=20),
-        link=dict(source=source, target=target, value=value)
+    
+   
+    labels = [
+        f"Total Demand ({total_demand})",         # Node 0
+        f"Completed ({total_completed})",         # Node 1
+        f"Unfulfilled Backlog ({backlog})",      # Node 2
+        f"Shipped ({items_shipped})",             # Node 3
+        f"In Finished Goods Inv. ({in_finished_goods})" # Node 4
+    ]
+    source_nodes = [0, 0, 1, 1]  # From: Demand, Demand, Completed, Completed
+    target_nodes = [1, 2, 3, 4]  # To:   Completed, Backlog, Shipped, Finished Goods
+    flow_values = [
+        total_completed,
+        backlog,
+        items_shipped,
+        in_finished_goods
+    ]
+    
+    
+    flow_values = [max(v, 0.0001) for v in flow_values]
+    
+    
+    colors = [
+        '#3b82f6', # Blue for Demand
+        '#22c55e', # Green for Completed
+        '#f97316', # Orange for Backlog
+        '#8b5cf6', # Purple for Shipped
+        '#f43f5e'  # Rose for Inventory
+    ]
+    
+    fig = go.Figure(data=[go.Sankey(
+        node=dict(
+            pad=25,
+            thickness=20,
+            line=dict(color="black", width=0.5),
+            label=labels,
+            color=colors
+        ),
+        link=dict(
+            source=source_nodes,
+            target=target_nodes,
+            value=flow_values
+        )
     )])
-    title = f"Orders: {orders_total}, Finished: {finished}, Shipped: {shipped}"
-    if orders_done is not None:
-        title += f" (Completed items: {orders_done})"
-    fig2.update_layout(title_text=title, height=350)
-    st.plotly_chart(fig2, use_container_width=True)
+    
+    fig.update_layout(
+        title_text="Order Fulfillment Flow (by Item Count)",
+        font_size=12,
+        height=400,
+        margin=dict(l=20, r=20, t=50, b=20)
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+
     st.subheader("Queue and WIP Distribution")
     df_states_q = bundle_viz.get("machine_states.csv")
     sim_h = float(assembled.get("sim_time_hours") or 0.0)
@@ -946,7 +1046,7 @@ def run_streamlit(output_dir: str):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Industrial Dashboard")
-    parser.add_argument("--output", required=True, help="Path to simulation output directory")
+    parser.add_argument("--output_dir", required=True, help="Path to simulation output directory")
     parser.add_argument("--serve", action="store_true", help="Start FastAPI server at :8000")
     parser.add_argument("--ui", action="store_true", help="Start Streamlit UI instead of API")
     args = parser.parse_args()
