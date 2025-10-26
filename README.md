@@ -119,3 +119,9 @@ streamlit run src/dashboard.py -- --output_dir data/processed
 Alternatively, the dashboard can be served as an API using FastAPI:
 python dashboard.py --serve --output_dir data/processed
 The API will be available at `http://127.0.0.1:8000`.
+
+### Sample Dashboard Capture 
+![](https://github.com/Anshul-Agr/factory-simulation/blob/main/Fact.gif)
+
+
+---
